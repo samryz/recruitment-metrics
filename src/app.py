@@ -1,13 +1,19 @@
+# First imports
+import sys
 import streamlit as st
-# Must be the first Streamlit command
-st.set_page_config(page_title="Recruitment Analytics", layout="wide")
-
 import pandas as pd
 import sqlite3
 from datetime import datetime, timedelta
 import os
 import plotly.express as px
 import plotly.graph_objects as go
+
+# Debug prints
+print("Starting app initialization...")
+print("Python version:", sys.version)
+
+# First Streamlit command
+st.set_page_config(page_title="Recruitment Analytics", layout="wide")
 
 # Custom CSS for styling
 st.markdown("""
@@ -107,10 +113,14 @@ st.markdown("""
 
 # Database functions (keep your existing ones)
 def get_db_path():
-    return os.path.abspath('recruitment_data.db')
+    # For local development, use file-based database
+    if os.getenv('STREAMLIT_SHARING') != 'true':
+        return os.path.abspath('recruitment_data.db')
+    # For Streamlit Cloud, use in-memory database
+    return ':memory:'
 
 def init_db():
-    conn = sqlite3.connect('recruitment_data.db')
+    conn = sqlite3.connect(get_db_path())
     c = conn.cursor()
     
     # Create recruitment_data table if it doesn't exist
