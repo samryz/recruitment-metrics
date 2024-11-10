@@ -1,0 +1,7 @@
+recruitment_data.db
+.DS_Store
+__pycache__/
+*.pyc
+.env
+venv/
+.streamlit/secrets.toml
