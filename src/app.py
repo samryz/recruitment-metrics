@@ -150,7 +150,7 @@ def init_db():
     conn.close()
 
 def get_db_count():
-    conn = sqlite3.connect('recruitment_data.db')
+    conn = sqlite3.connect(get_db_path())  # NEW VERSION using get_db_path()
     try:
         cursor = conn.cursor()
         cursor.execute("SELECT COUNT(*) FROM recruitment_data")
@@ -182,7 +182,7 @@ def save_to_db(df):
         'Posting Title': 'posting_title'
     })
     
-    conn = sqlite3.connect('recruitment_data.db')
+    conn = sqlite3.connect(get_db_path())  # NEW VERSION using get_db_path()
     df_to_save.to_sql('recruitment_data', conn, if_exists='append', index=False)
     conn.close()
     
@@ -190,7 +190,7 @@ def save_to_db(df):
     return True, f"Data saved successfully. Total records: {count}"
 
 def load_from_db():
-    conn = sqlite3.connect('recruitment_data.db')
+    conn = sqlite3.connect(get_db_path())  # NEW VERSION using get_db_path()
     try:
         df = pd.read_sql_query("SELECT * FROM recruitment_data", conn)
         df = df.rename(columns={
