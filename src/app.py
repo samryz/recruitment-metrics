@@ -12,6 +12,8 @@ import plotly.graph_objects as go
 print("Starting app initialization...")
 print("Python version:", sys.version)
 
+init_db()
+
 # First Streamlit command
 st.set_page_config(page_title="Recruitment Analytics", layout="wide")
 
@@ -162,7 +164,7 @@ def get_db_count():
 def reset_database():
     try:
         db_path = get_db_path()
-        if os.path.exists(db_path):
+        if db_path != ':memory:' and os.path.exists(db_path):
             os.remove(db_path)
         init_db()
         st.session_state.clear()
@@ -211,7 +213,7 @@ def load_from_db():
         conn.close()
 
 def save_file_record(filename, record_count):
-    conn = sqlite3.connect('recruitment_data.db')
+    conn = sqlite3.connect(get_db_path())
     try:
         c = conn.cursor()
         # Use REPLACE to handle duplicates
@@ -226,7 +228,7 @@ def save_file_record(filename, record_count):
         conn.close()
 
 def get_uploaded_files():
-    conn = sqlite3.connect('recruitment_data.db')
+    conn = sqlite3.connect(get_db_path())
     c = conn.cursor()
     c.execute('SELECT filename, upload_timestamp, record_count FROM file_uploads ORDER BY upload_timestamp DESC')
     files = c.fetchall()
@@ -234,7 +236,7 @@ def get_uploaded_files():
     return files
 
 def remove_file_record(filename):
-    conn = sqlite3.connect('recruitment_data.db')
+    conn = sqlite3.connect(get_db_path())
     c = conn.cursor()
     c.execute('DELETE FROM file_uploads WHERE filename = ?', (filename,))
     conn.commit()
